@@ -70,6 +70,8 @@ A more detailed annotation is performed by `annotationfinder.py`, which combines
 
 For the coverage analysis, `genefinder_for_coverage_allinone.py` combines the site-level coverage summaries with the gene annotation. The resulting `sites_with_genes.tsv` links coverage information to genomic positions and their associated genes. Subsequently, `gene_summary2.py` summarizes the occurrence of multi-allelic sites at the gene level, including site counts, gene length, site density, and coverage statistics. This allows differences in the number of multi-allelic sites between genes to be evaluated in relation to gene length and sequencing coverage.
 
+To compare the distribution of coding and non-coding gene share, as well as the functional regions, the proportion was determined with `genes-genomicpositions.py`.
+
 ### Fitness matrix estimation
 
 The temporal allele-frequency trajectories are used to estimate fitness matrices, with the aim of inferring relative genotype-specific fitness effects from changes in allele frequencies across generations. Two alternative implementations are available, based on the methods described by [Vellnow et al. (2026)](https://link.springer.com/article/10.1186/s12864-026-13411-5) and the [bioRxiv preprint (2024)](https://www.biorxiv.org/content/10.1101/2024.11.08.622587v3). The original implementation and the revised implementation differ in their cost function.
