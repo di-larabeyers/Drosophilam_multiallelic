@@ -64,7 +64,7 @@ A separate coverage analysis examines sequencing depth at multi-allelic position
 
 To investigate the genomic context of multi-allelic variation, the allele-frequency data are converted into BED format using `makebed.py`. This representation enables the genomic positions to be compared with gene annotations and coding-sequence coordinates.
 
-The scripts `genefinder.py` and `cdsfinder.py` identify genes and coding sequences overlapping the analyzed positions. This step establishes whether multi-allelic sites are located within annotated genes or coding regions and provides gene-level information for subsequent summaries.
+The scripts `genefinder.py` and `cdsfinder.py` identify genes and coding sequences overlapping the analyzed positions. This step establishes whether multi-allelic sites are located within annotated genes or coding regions and provides gene-level information for subsequent summaries. Finally, it is possible to count the determined genes with `count_words.py'.
 
 A more detailed annotation is performed by `annotationfinder.py`, which combines the genomic coordinates, the GFF3 gene annotation, and the converted allele-frequency data. The script assigns genomic annotations to multi-allelic positions and generates `annotated_multiallelic_sites.tsv`. This output enables the distribution of multiallelic sites across annotated genomic features to be examined.
 
