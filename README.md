@@ -2,13 +2,15 @@
 
 # Purpose
 
-This workflow investigates the evolutionary dynamics of multi-allelic loci in pooled *Drosophila melanogaster* populations across multiple sampling time points. By combining temporal allele-frequency trajectories with fitness matrix estimation, it characterizes the fitness effects of multi-allelic genotypes and evaluates potential heterozygote advantage using both fitness-based metrics and the Lewontin condition. In parallel, multi-allelic sites are annotated to genomic features and genes to investigate their genomic distribution and functional context. Coverage-based analyses assess the relationship between sequencing depth and multi-allelic variation, while a targeted analysis of insecticide-resistance genes provides a more detailed examination of fitness patterns and multi-allelic variation in genes potentially involved in adaptive resistance. Together, these analyses integrate population-genomic, evolutionary, and functional perspectives to investigate the potential role of multiallelic variation in adaptation.
+This workflow investigates how multi-allelic sites change over time in pooled *Drosophila melanogaster* populations. By tracking allele frequencies across generations, it estimates the fitness of different genotypes and examines whether heterozygotes have a fitness advantage. This is assessed using fitness-based measures and the Lewontin condition.
+The workflow also identifies where multi-allelic sites are located in the genome and which genes and genomic regions they overlap, including coding regions, introns, and untranslated regions. In addition, coverage analyses examine whether sequencing depth is related to the detection and distribution of multi-allelic sites. Finally, selected insecticide-resistance genes are investigated in more detail to examine their multi-allelic variation and estimated fitness patterns.
+Together, these analyses help to understand how multi-allelic sites are distributed across the genome, how they may affect fitness, and whether they could play a role in adaptation in *D. melanogaster*.
 
 # Main workflow 
 1. Locate the input BAM files and write a file list.
 2. Fix read groups in BAM files.
-3. Run allele extraction with FreeBayes, optionally applying a coverage filter.
-4. Convert extracted allele counts to allele-frequency/trajectory tables using either hard filters or coverage filters.
+3. Run allele extraction with FreeBayes (optionally applying a coverage filter).
+4. Convert extracted allele counts to allele-frequency tables (using either hard filters or coverage filters).
 5. Run allele statistics and downstream branches:
    - fitness matrix estimation and heterozygote-advantage analysis;
    - genomic annotation and gene-level summaries;
