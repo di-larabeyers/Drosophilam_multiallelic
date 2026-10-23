@@ -2,7 +2,7 @@
 
 # Purpose
 
-This workflow processes pooled *Drosophila melanogaster* sequencing data across different sampling time points. It calls variants/alleles, applies alternative filtering and conversion strategies, creates allele-frequency trajectories, estimates fitness matrices, evaluates heterozygote advantage, annotates multi-allelic loci, and performs coverage- and resistance-gene-focused analyses.
+This workflow investigates the evolutionary dynamics of multi-allelic loci in pooled *Drosophila melanogaster* populations across multiple sampling time points. By combining temporal allele-frequency trajectories with fitness matrix estimation, it characterizes the fitness effects of multi-allelic genotypes and evaluates potential heterozygote advantage using both fitness-based metrics and the Lewontin condition. In parallel, multi-allelic sites are annotated to genomic features and genes to investigate their genomic distribution and functional context. Coverage-based analyses assess the relationship between sequencing depth and multi-allelic variation, while a targeted analysis of insecticide-resistance genes provides a more detailed examination of fitness patterns and multi-allelic variation in genes potentially involved in adaptive resistance. Together, these analyses integrate population-genomic, evolutionary, and functional perspectives to investigate the potential role of multiallelic variation in adaptation.
 
 # Main workflow 
 1. Locate the input BAM files and write a file list.
