@@ -39,11 +39,9 @@ Together, these analyses help to understand how multi-allelic sites are distribu
 
 
 ## Analysis Workflow
+**Workflow visualizations:** The complete analysis pipeline, including all processing steps and scripts, is available here:
 
-The following workflow illustrates the complete processing pipeline,
-from BAM files to genomic annotation, fitness estimation and
-resistance-gene analysis.
-**Workflow visualizations:** Different views of the analysis workflow, including examples of the corresponding output files, are available in the [`workflow`](https://github.com/di-larabeyers/Drosophilam_multiallelic/tree/main/workflow) folder.
+[**Drosophila Pipeline – Complete Workflow (PDF)**](workflow/Drosophila_pipeline_all_pages.pdf)
 
 
 
