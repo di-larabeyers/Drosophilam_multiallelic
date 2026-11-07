@@ -43,187 +43,97 @@ Together, these analyses help to understand how multi-allelic sites are distribu
 The following workflow illustrates the complete processing pipeline,
 from BAM files to genomic annotation, fitness estimation and
 resistance-gene analysis.
+**Workflow visualizations:** Different views of the analysis workflow, including examples of the corresponding output files, are available in the [`workflow`](https://github.com/di-larabeyers/Drosophilam_multiallelic/tree/main/workflow) folder.
+
+
+## Analysis Workflow
 
 ```mermaid
-flowchart TD
+flowchart TB
 
-    %% A. Input preparation and extraction
-    subgraph A["A. Input preparation and allele extraction"]
-        BAM["Pooled D. melanogaster BAM files"]
-        LIST["list.txt"]
-        FIX["fix_read_groups.sh"]
-        RGBAM["Read-group-corrected BAMs<br/>*_RGfixed.bam"]
+    A["BAM files<br/>15 time points"]
+    B["BAM preparation<br/>fix_read_groups.sh"]
 
-        EX1["run_extraction.sh"]
-        EX2["run_extraction_coveragefilter.sh"]
-
-        RAW1["filtered_sites_allc.tsv<br/>allele_counts_snps_all.tsv"]
-        RAW2["filtered_sites_allc_cov.tsv<br/>*_mincov_*_skipcov_*.tsv"]
-
-        BAM --> FIX
-        LIST --> FIX
-        FIX --> RGBAM
-        RGBAM --> EX1
-        RGBAM --> EX2
-        EX1 --> RAW1
-        EX2 --> RAW2
+    subgraph V["1. Variant calling and filtering"]
+        C["FreeBayes<br/>run_extraction.sh"]
+        D["Coverage-based extraction<br/>run_extraction_coveragefilter.sh"]
+        E["Hard-filtered dataset"]
+        F["Coverage-filtered dataset"]
+        C --> E
+        D --> F
     end
 
-    %% B. Conversion
-    subgraph B["B. Conversion into allele-frequency trajectories"]
-        CONV1["data_conversion_all.py"]
-        CONV2["data_conversion_cf.py"]
-        CONV3["data_conversion_hcf_mna5_allc_new.py"]
-
-        HF["pop_a_b_allelefreq.tsv"]
-        CF["pop_allc_hcf_converted.tsv"]
-        CF5["pop_mincov_611_skipcov_3663_converted_mna5_new.tsv"]
-
-        COUNT["count_alleles.py"]
-        NALLELES["n_alleles.tsv"]
-
-        RAW1 --> CONV1
-        RAW2 --> CONV2
-        RAW2 --> CONV3
-
-        CONV1 --> HF
-        CONV2 --> CF
-        CONV3 --> CF5
-
-        HF --> COUNT
-        CF --> COUNT
-        COUNT --> NALLELES
+    subgraph P["2. Data processing"]
+        G["Allele-frequency conversion<br/>data_conversion_*.py"]
+        H["Allele counting<br/>count_alleles.py"]
+        I["Coverage analysis<br/>alleles_coverage_count*.py"]
     end
 
-    %% C. Genomic annotation
-    subgraph C["C. Genomic annotation of multi-allelic loci"]
-        BED["makebed.py"]
-        BEDFILES["hardfilter.bed / hcfilter.bed"]
-
-        ANN["annotationfinder.py"]
-        GENE["genefinder.py"]
-        CDS["cdsfinder.py"]
-        WORDS["count_words.py"]
-
-        ANNOTATED["annotated_multiallelic_sites.tsv"]
-        GENES["genes_*.txt"]
-        CDSES["genes_*_cds.txt"]
-        NGENES["Number of genes"]
-
-        HF --> BED
-        CF --> BED
-        BED --> BEDFILES
-
-        BEDFILES --> ANN
-        BEDFILES --> GENE
-        BEDFILES --> CDS
-
-        ANN --> ANNOTATED
-        GENE --> GENES
-        GENE --> WORDS
-        WORDS --> NGENES
-        CDS --> CDSES
+    subgraph AN["3. Genomic annotation"]
+        J["BED generation<br/>makebed.py"]
+        K["Gene identification<br/>genefinder.py"]
+        L["Detailed annotation<br/>annotationfinder.py"]
+        M["CDS identification<br/>cdsfinder.py"]
     end
 
-    %% D. Coverage and gene-level analysis
-    subgraph D["D. Coverage and gene-level analysis"]
-        COVCOUNT["alleles_coverage_count.py"]
-        COVSUMMARY["Site-level coverage summary"]
-        GENECOV["genefinder_for_coverage_allinone.py"]
-        GENESITES["sites_with_genes.tsv"]
-        GENESUM["gene_summary2.py"]
-        GENESUMOUT["Gene-level summary"]
-        WINDOWS["coverage_sites_per_100kb.py"]
-        WINDOWOUT["coverage_summary_100kb_windows.tsv"]
-
-        RAW2 --> COVCOUNT
-        COVCOUNT --> COVSUMMARY
-        COVSUMMARY --> GENECOV
-        COVSUMMARY --> WINDOWS
-        GENECOV --> GENESITES
-        GENESITES --> GENESUM
-        GENESUM --> GENESUMOUT
-        WINDOWS --> WINDOWOUT
+    subgraph FIT["4. Fitness estimation"]
+        N["Original method<br/>scan_dros_genome_F.m"]
+        O["Improved method<br/>scan_dros_genome_F_new.m"]
+        N1["Sparse optimization<br/>CostSparseFn.m"]
+        O1["Shahshahani weighting<br/>+ Ridge regularization<br/>CostSparseShahRidge.m"]
+        N --> N1
+        O --> O1
     end
 
-    %% E. Fitness estimation
-    subgraph E["E. Fitness matrix estimation"]
-
-        subgraph E1["E1. Original implementation"]
-            SCAN1["scan_dros_genome_F.m"]
-            FIT1["fit_F_sparse_func.m"]
-            COST1["CostSparseFn.m"]
-            RES1["F_results*.mat"]
-            SCAN1 --> FIT1
-            FIT1 --> COST1
-            COST1 --> RES1
-        end
-
-        subgraph E2["E2. Improved implementation"]
-            SCAN2["scan_dros_genome_F_new.m"]
-            FIT2["fit_F_sparse_func_new.m"]
-            COST2["CostSparseShahRidge.m"]
-            RES2["F_results*_new.mat"]
-            SCAN2 --> FIT2
-            FIT2 --> COST2
-            COST2 --> RES2
-        end
-
-        SMAT["SMatVec.m"]
-        CONVERTW["convert_F_to_w.m"]
-
-        HF --> SCAN1
-        CF --> SCAN1
-        HF --> SCAN2
-        CF --> SCAN2
-
-        SMAT -.-> FIT1
-        SMAT -.-> FIT2
-        CONVERTW -.-> FIT2
+    subgraph POST["5. Fitness matrix analysis"]
+        Q["Fitness post-processing<br/>scan_dros_genome_anaylsis*.m"]
+        R["HetAdv calculation"]
+        S["Lewontin condition check"]
+        T["Quantile subgroup analysis<br/>subgroups.m"]
     end
 
-    %% F. Fitness post-processing
-    subgraph F["F1. Fitness post-processing and matrix analysis"]
-        ANALYSIS["scan_dros_genome_anaylsis*.m"]
-        FRESULTS["F_analysis_results*.mat"]
-
-        SUBGROUP["subgroups.m"]
-        QFILES["Quantile subgroup CSV files<br/>ninefive_*.csv<br/>mid_*.csv<br/>homtg_*.csv<br/>homadv_*.csv<br/>high_hav_*.csv<br/>five_*.csv"]
-
-        RES1 --> ANALYSIS
-        RES2 --> ANALYSIS
-        ANALYSIS --> FRESULTS
-        FRESULTS --> SUBGROUP
-        SUBGROUP --> QFILES
+    subgraph RES["6. Resistance gene analysis"]
+        U["Candidate genes<br/>Ace · Rdl · Cyp"]
+        W["Gene-specific fitness evaluation"]
     end
 
-    %% F2. Resistance genes
-    subgraph R["F2. Candidate insecticide-resistance genes"]
-        RDL["Rdl filter"]
-        ACE["Ace filter"]
-        CYP["Cyp filters"]
-        RRESULTS["Gene-/region-specific result subsets<br/>F_analysis_results_*filter*_*chr*_*range*.mat"]
+    A --> B
+    B --> C
+    B --> D
 
-        FRESULTS --> RDL
-        FRESULTS --> ACE
-        FRESULTS --> CYP
+    E --> G
+    F --> G
+    G --> H
+    G --> I
+    G --> J
 
-        RDL --> RRESULTS
-        ACE --> RRESULTS
-        CYP --> RRESULTS
-    end
+    J --> K
+    J --> L
+    J --> M
 
-    %% Styling
-    classDef input fill:#dce9f7,stroke:#326a9b,color:#173b5e
-    classDef script fill:#d8eeee,stroke:#287c7c,color:#164b4b
-    classDef output fill:#ffffff,stroke:#548c58,color:#222222
-    classDef fitness fill:#eee6f7,stroke:#76549b,color:#422b60
+    G --> N
+    G --> O
 
-    class BAM,LIST,RAW1,RAW2,RGBAM input
-    class FIX,EX1,EX2,CONV1,CONV2,CONV3,BED,ANN,GENE,CDS,WORDS,COVCOUNT,GENECOV,GENESUM,WINDOWS script
-    class HF,CF,CF5,NALLELES,BEDFILES,ANNOTATED,GENES,CDSES,NGENES,COVSUMMARY,GENESITES,GENESUMOUT,WINDOWOUT,RES1,RES2,FRESULTS,QFILES,RRESULTS output
-    class SCAN1,FIT1,COST1,SCAN2,FIT2,COST2,SMAT,CONVERTW,ANALYSIS,SUBGROUP fitness
+    N1 --> Q
+    O1 --> Q
+
+    Q --> R
+    Q --> S
+    Q --> T
+
+    L --> U
+    Q --> U
+    U --> W
+
+    classDef main fill:#dce9f7,stroke:#326a9b,color:#173b5e
+    classDef analysis fill:#eee6f7,stroke:#76549b,color:#422b60
+    classDef output fill:#e2f0e4,stroke:#548c58,color:#244b2b
+
+    class A,B,C,D,E,F main
+    class N,O,N1,O1,Q,R,S,T analysis
+    class U,W output
 ```
+
 
 
 ## Input preparation and read-group correction
