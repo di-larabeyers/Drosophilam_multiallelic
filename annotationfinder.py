@@ -47,7 +47,7 @@ INPUT_FILE = "linvilla_allc_hcf_converted.tsv"
 GFF_FILE = "genes_annotations_612.gff3"
 
 TEMP_FILE = "temp_intersect2.tsv"
-OUTPUT_FILE = "annotated_multiallelic_sites2.tsv"
+OUTPUT_FILE = "annotated_multiallelic_sites.tsv"
 
 
 ############################################################
