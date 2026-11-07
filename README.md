@@ -85,9 +85,9 @@ The resulting fitness matrices and cost values are saved in MATLAB result files 
 
 ### Analysis of heterozygote advantage
 
-The estimated fitness matrices are further processed using `scan_dros_genome_anaylsis.m` or `scan_dros_genome_anaylsis_nice.m`. These scripts evaluate the estimated fitness relationships and calculate additional metrics, including `hav1`, which is used in the workflow to quantify the strength of heterozygote advantage.
+The estimated fitness matrices are further processed using `scan_dros_genome_anaylsis.m` or `scan_dros_genome_anaylsis_nice.m`. These scripts evaluate the estimated fitness relationships and calculate additional metrics, including `hav1`, which is used in the workflow to quantify the strength of heterozygote advantage. Furthermore, the scripts assess whether the estimated fitness relationships fulfil the Lewontin condition, which evaluates the potential for balancing selection.
 
-The resulting analysis tables contain the derived fitness-related metrics and form the basis for further investigations of the evolutionary properties of multiallelic sites. By linking these estimates to the genomic annotations, the fitness-related results can subsequently be examined in the context of specific genes and genomic regions.
+The resulting analysis tables contain the derived fitness-related metrics, including heterozygote advantage and the outcome of the Lewontin condition check, and form the basis for further investigations of the evolutionary properties of multiallelic sites. By linking these estimates to the genomic annotations, the fitness-related results can subsequently be examined in the context of specific genes and genomic regions.
 
 ### Analysis of insecticide-resistance genes
 
